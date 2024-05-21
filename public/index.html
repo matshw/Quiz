@@ -3,36 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Client</title>
+    <title>Quiz</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>WebSocket Client</h1>
-    <input type="text" id="messageInput" placeholder="Digite sua mensagem...">
-    <button onclick="sendMessage()">Enviar</button>
-    <ul id="messages"></ul>
+    <div id="quiz-container">
+        <h1>Quiz</h1>
+        <p id="questao"></p>
+        <ul id="opcoes"></ul>
+        <p id="pontuacao">Pontuação: 0</p>
+        <p id="nivel">Nível: 1</p>
+    </div>
+
+    <div id="end-container" style="display: none;">
+        <h2>Quiz concluído!</h2>
+        <p id="pontuacao-final"></p>
+        <button onclick="reiniciar()">Reiniciar</button>
+    </div>
 
     <script>
         const ws = new WebSocket('ws://localhost:8080');
-
+        let questaoAtual = null;
+        let nivel = 0;
+        
         ws.onopen = () => {
-            console.log('Conectado ao servidor WebSocket');
+            console.log('Usuário conectou no servidor');
         };
 
         ws.onmessage = (event) => {
-            const messages = document.getElementById('messages');
-            const message = document.createElement('li');
-            message.textContent = event.data;
-            messages.appendChild(message);
+            const data = JSON.parse(event.data);
+            if (data.type === 'questao') {
+                questaoAtual = data.questao;
+                displayQuestion(data.questao);
+                document.getElementById('pontuacao').textContent = 'Pontuação: ' + data.pontuacao;
+                document.getElementById('nivel').textContent = 'Nível: ' + (nivel + 1);
+                document.getElementById('end-container').style.display = 'none';
+                if(data.pontuacao === undefined){
+                    pontuacao = 0;
+                    document.getElementById('pontuacao').textContent = 'Pontuação: ' + pontuacao;
+                }
+                nivel++;
+            } else if (data.type === 'end') {
+                final(data.pontuacao);
+            }
         };
 
         ws.onclose = () => {
-            console.log('Desconectado do servidor WebSocket');
+            console.log('Usuário desconectou do servidor');
         };
 
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            ws.send(input.value);
-            input.value = '';
+        function displayQuestion(questao) {
+            document.getElementById('questao').textContent = questao.questao;
+            const listaOpcoes = document.getElementById('opcoes');
+            listaOpcoes.innerHTML = '';
+            questao.opcoes.forEach(option => {
+                const li = document.createElement('li');
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => enviarResposta(option);
+                li.appendChild(button);
+                listaOpcoes.appendChild(li);
+            });
+        }
+
+        function enviarResposta(resposta) {
+            ws.send(JSON.stringify({ type: 'resposta', resposta: resposta }));
+        }
+
+        function final(pontuacao) {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('end-container').style.display = 'block';
+            document.getElementById('pontuacao-final').textContent = 'Pontuação final: ' + pontuacao;
+        }
+
+        function reiniciar() {
+            window.location.reload();
         }
     </script>
 </body>

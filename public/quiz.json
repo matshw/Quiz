@@ -1,0 +1,20 @@
+[
+    {
+        "questao": "Qual é a capital da França?",
+        "opcoes": ["Paris", "Londres", "Roma", "Berlim"],
+        "resposta": "Paris",
+        "pontos": 10
+    },
+    {
+        "questao": "Quem pintou a Mona Lisa?",
+        "opcoes": ["Leonardo da Vinci", "Vincent van Gogh", "Pablo Picasso", "Claude Monet"],
+        "resposta": "Leonardo da Vinci",
+        "pontos": 10
+    },
+    {
+        "questao": "Qual é o maior planeta do sistema solar?",
+        "opcoes": ["Terra", "Marte", "Júpiter", "Saturno"],
+        "resposta": "Júpiter",
+        "pontos": 10
+    }
+]
