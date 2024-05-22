@@ -7,8 +7,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="quiz-container">
+    <div id="login-container">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="Digite seu nome">
+        <button onclick="login()">Entrar</button>
+        <p id="error-message"></p>
+    </div>
+
+    <div id="quiz-container" style="display: none;">
         <h1>Quiz</h1>
+        <p id="bem-vindo"></p>
         <p id="questao"></p>
         <ul id="opcoes"></ul>
         <p id="pontuacao">Pontuação: 0</p>
@@ -23,34 +31,41 @@
 
     <script>
         const ws = new WebSocket('ws://localhost:8080');
-        let questaoAtual = null;
-        let nivel = 0;
-        
-        ws.onopen = () => {
-            console.log('Usuário conectou no servidor');
-        };
+    let questaoAtual = null;
+    let nivel = 0;
 
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.type === 'questao') {
-                questaoAtual = data.questao;
-                displayQuestion(data.questao);
-                document.getElementById('pontuacao').textContent = 'Pontuação: ' + data.pontuacao;
-                document.getElementById('nivel').textContent = 'Nível: ' + (nivel + 1);
-                document.getElementById('end-container').style.display = 'none';
-                if(data.pontuacao === undefined){
-                    pontuacao = 0;
-                    document.getElementById('pontuacao').textContent = 'Pontuação: ' + pontuacao;
-                }
-                nivel++;
-            } else if (data.type === 'end') {
-                final(data.pontuacao);
-            }
-        };
+    ws.onopen = () => {
+        console.log('Usuário conectou no servidor');
+    };
 
-        ws.onclose = () => {
-            console.log('Usuário desconectou do servidor');
-        };
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'bemvindo') {
+            document.getElementById('bem-vindo').textContent = data.message;
+        } else if (data.type === 'error') {
+            document.getElementById('error-message').textContent = data.message;
+        } else if (data.type === 'questao') {
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('login-container').style.display = 'none';
+            questaoAtual = data.questao;
+            displayQuestion(data.questao);
+            document.getElementById('nivel').textContent = 'Nível: ' + (nivel + 1);
+            document.getElementById('pontuacao').textContent = 'Pontuação: ' + (data.pontuacao !== undefined ? data.pontuacao : 0);
+            document.getElementById('end-container').style.display = 'none';
+            nivel++;
+        } else if (data.type === 'end') {
+            final(data.pontuacao);
+        }
+    };
+
+    ws.onclose = () => {
+        console.log('Usuário desconectou do servidor');
+    };
+
+    function login() {
+        const username = document.getElementById('username').value;
+        ws.send(JSON.stringify({ type: 'login', username: username }));
+    }
 
         function displayQuestion(questao) {
             document.getElementById('questao').textContent = questao.questao;

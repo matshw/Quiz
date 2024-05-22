@@ -1,20 +1,20 @@
 [
     {
-        "questao": "Qual é a capital da França?",
-        "opcoes": ["Paris", "Londres", "Roma", "Berlim"],
-        "resposta": "Paris",
-        "pontos": 10
+        "questao": "Qual o nome do cientista inglês famoso por ser o pai da ciência e da computação?",
+        "opcoes": ["Alan Turing", "Tommy Flowers", "John McCarty", "Joan Clarke"],
+        "resposta": "Alan Turing",
+        "pontos": 5
     },
     {
-        "questao": "Quem pintou a Mona Lisa?",
-        "opcoes": ["Leonardo da Vinci", "Vincent van Gogh", "Pablo Picasso", "Claude Monet"],
-        "resposta": "Leonardo da Vinci",
-        "pontos": 10
+        "questao": "Qual o nome da rede de computadores que deu origem a internet?",
+        "opcoes": ["ARPANET", "Milnet", "NSFNET", "World Wide Web"],
+        "resposta": "ARPANET",
+        "pontos": 7
     },
     {
-        "questao": "Qual é o maior planeta do sistema solar?",
-        "opcoes": ["Terra", "Marte", "Júpiter", "Saturno"],
-        "resposta": "Júpiter",
+        "questao": "Qual o nome de um dos primeiros computadores a ser inventado na história?",
+        "opcoes": ["ENIAC", "IBM 7030", "Macintosh", "Altair 8800"],
+        "resposta": "ENIAC",
         "pontos": 10
     }
 ]
