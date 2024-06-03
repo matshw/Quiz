@@ -1,74 +1,143 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+    background: #f0f0f5;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    text-align: center;
 }
 
-h1 {
+.container {
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 20px;
+}
+
+h1, h2 {
     color: #333;
+    font-size: 28px;
     margin-bottom: 20px;
 }
 
-#quiz-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+input[type="text"] {
     width: 100%;
-    max-width: 600px;
-    text-align: center;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #5fa5f0;
+    color: white;
+    padding: 12px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}
+
+#jogadores-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#jogadores-container ul li {
+    margin: 10px 0;
+}
+
+#quiz-container, #end-container {
+    display: none;
+}
+
+#quiz-container.active, #end-container.active {
+    display: block;
 }
 
 #questao {
-    font-size: 1.2em;
+    font-size: 22px;
     margin-bottom: 20px;
+    color: #333;
+    text-align: left;
 }
 
 #opcoes {
     list-style-type: none;
     padding: 0;
+    text-align: left;
 }
 
 #opcoes li {
-    margin: 10px 0;
+    margin-bottom: 10px;
 }
 
 #opcoes button {
-    background-color: #007bff;
+    background-color: #007BFF;
     color: white;
-    border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 16px;
     transition: background-color 0.3s ease;
+    width: 100%;
+    text-align: left;
 }
 
 #opcoes button:hover {
     background-color: #0056b3;
 }
 
-#next-button {
-    display: none;
-    background-color: #28a745;
+#pontuacao, #nivel {
+    font-size: 18px;
+    margin-top: 20px;
+    color: #555;
+}
+
+#end-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 28px;
+}
+
+#end-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#end-container ul li {
+    margin: 10px 0;
+}
+
+#end-container button {
+    background-color: #5291d4;
     color: white;
+    padding: 12px 20px;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
-#next-button:hover {
-    background-color: #218838;
-}
-
-#pontuacao, #nivel {
-    font-size: 1em;
-    margin-top: 10px;
-    color: #555;
+#end-container button:hover {
+    background-color: #0056b3;
 }

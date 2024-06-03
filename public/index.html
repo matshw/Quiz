@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="login-container">
+    <div id="login-container" class="container">
         <h1>Login</h1>
         <input type="text" id="username" placeholder="Digite seu nome">
         <button onclick="login()">Entrar</button>
-        <p id="error-message"></p>
+        <p id="error-message" class="error-message"></p>
     </div>
 
-    <div id="quiz-container" style="display: none;">
+    <div id="jogadores-container" class="container" style="display: none;">
+        <h1>Jogadores</h1>
+        <ul id="jogadores"></ul>
+        <button onclick="pronto()">Estou Pronto</button>
+    </div>
+
+    <div id="quiz-container" class="container" style="display: none;">
         <h1>Quiz</h1>
         <p id="bem-vindo"></p>
         <p id="questao"></p>
@@ -23,77 +29,101 @@
         <p id="nivel">Nível: 1</p>
     </div>
 
-    <div id="end-container" style="display: none;">
+    <div id="end-container" class="container" style="display: none;">
         <h2>Quiz concluído!</h2>
-        <p id="pontuacao-final"></p>
+        <ul id="ranking"></ul>
         <button onclick="reiniciar()">Reiniciar</button>
     </div>
 
     <script>
         const ws = new WebSocket('ws://localhost:8080');
-    let questaoAtual = null;
-    let nivel = 0;
+        let questaoAtual = null;
+        let nivel = 0;
 
-    ws.onopen = () => {
-        console.log('Usuário conectou no servidor');
-    };
+        ws.onopen = () => {
+            console.log('Usuário conectou no servidor');
+        };
 
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'bemvindo') {
-            document.getElementById('bem-vindo').textContent = data.message;
-        } else if (data.type === 'error') {
-            document.getElementById('error-message').textContent = data.message;
-        } else if (data.type === 'questao') {
-            document.getElementById('quiz-container').style.display = 'block';
-            document.getElementById('login-container').style.display = 'none';
-            questaoAtual = data.questao;
-            displayQuestion(data.questao);
-            document.getElementById('nivel').textContent = 'Nível: ' + (nivel + 1);
-            document.getElementById('pontuacao').textContent = 'Pontuação: ' + (data.pontuacao !== undefined ? data.pontuacao : 0);
-            document.getElementById('end-container').style.display = 'none';
-            nivel++;
-        } else if (data.type === 'end') {
-            final(data.pontuacao);
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'error') {
+                document.getElementById('error-message').textContent = data.message;
+            } else if (data.type === 'novo_jogador' || data.type === 'jogador_saiu') {
+                if (document.getElementById('quiz-container').style.display === 'none' && document.getElementById('end-container').style.display === 'none') {
+                    document.getElementById('jogadores-container').style.display = 'block';
+                    document.getElementById('login-container').style.display = 'none';
+                    const jogadoresUl = document.getElementById('jogadores');
+                    jogadoresUl.innerHTML = '';
+                    data.jogadores.forEach(nome => {
+                        const li = document.createElement('li');
+                        li.textContent = nome;
+                        jogadoresUl.appendChild(li);
+                    });
+                }
+            } else if (data.type === 'inicio_quiz' || data.type === 'questao') {
+                document.getElementById('jogadores-container').style.display = 'none';
+                document.getElementById('quiz-container').style.display = 'block';
+                questaoAtual = data.questao;
+                displayQuestion(data.questao);
+                document.getElementById('nivel').textContent = 'Nível: ' + (nivel + 1);
+                document.getElementById('pontuacao').textContent = 'Pontuação: ' + (data.pontuacao !== undefined ? data.pontuacao : 0);
+                document.getElementById('end-container').style.display = 'none';
+                nivel++;
+            } else if (data.type === 'end') {
+                document.getElementById('jogadores-container').style.display = 'none';
+                document.getElementById('quiz-container').style.display = 'none';
+                document.getElementById('end-container').style.display = 'block';
+                const rankingUl = document.getElementById('ranking');
+                rankingUl.innerHTML = '';
+                data.ranking.forEach((jogador, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${index + 1}. ${jogador.nome} - ${jogador.pontuacao} pontos`;
+                    rankingUl.appendChild(li);
+                });
+            } else if (data.type === 'reiniciar') {
+                document.getElementById('login-container').style.display = 'block';
+                document.getElementById('jogadores-container').style.display = 'none';
+                document.getElementById('quiz-container').style.display = 'none';
+                document.getElementById('end-container').style.display = 'none';
+                nivel = 0;
+                questaoAtual = null;
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('Usuário desconectou do servidor');
+        };
+
+        function login() {
+            const username = document.getElementById('username').value;
+            ws.send(JSON.stringify({ type: 'login', username: username }));
         }
-    };
 
-    ws.onclose = () => {
-        console.log('Usuário desconectou do servidor');
-    };
-
-    function login() {
-        const username = document.getElementById('username').value;
-        ws.send(JSON.stringify({ type: 'login', username: username }));
-    }
+        function pronto() {
+            ws.send(JSON.stringify({ type: 'pronto' }));
+        }
 
         function displayQuestion(questao) {
             document.getElementById('questao').textContent = questao.questao;
             const listaOpcoes = document.getElementById('opcoes');
             listaOpcoes.innerHTML = '';
-            questao.opcoes.forEach(option => {
+            questao.opcoes.forEach(opcao => {
                 const li = document.createElement('li');
                 const button = document.createElement('button');
-                button.textContent = option;
-                button.onclick = () => enviarResposta(option);
+                button.textContent = opcao;
+                button.onclick = () => {
+                    ws.send(JSON.stringify({ type: 'resposta', resposta: opcao }));
+                };
                 li.appendChild(button);
                 listaOpcoes.appendChild(li);
             });
         }
 
-        function enviarResposta(resposta) {
-            ws.send(JSON.stringify({ type: 'resposta', resposta: resposta }));
-        }
-
-        function final(pontuacao) {
-            document.getElementById('quiz-container').style.display = 'none';
-            document.getElementById('end-container').style.display = 'block';
-            document.getElementById('pontuacao-final').textContent = 'Pontuação final: ' + pontuacao;
-        }
-
         function reiniciar() {
-            window.location.reload();
-        }
+    document.getElementById('jogadores-container').style.display = 'none';
+    window.location.reload();
+}
     </script>
 </body>
 </html>
