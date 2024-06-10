@@ -3,6 +3,6 @@ const app = express();
 app.get("/", (req, res) => {  
     res.send(" ");
 });
-app.listen(8080, () => {  
-    console.log("rodando na porta 8080");
+app.listen(7777, () => {  
+    console.log("rodando na porta 7777");
 });

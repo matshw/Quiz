@@ -7,20 +7,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="login-container" class="container">
+    <div id="div-telainicial" class="container">
         <h1>Login</h1>
         <input type="text" id="username" placeholder="Digite seu nome">
         <button onclick="login()">Entrar</button>
         <p id="error-message" class="error-message"></p>
     </div>
 
-    <div id="jogadores-container" class="container" style="display: none;">
+    <div id="div-jogador" class="container" style="display: none;">
         <h1>Jogadores</h1>
         <ul id="jogadores"></ul>
-        <button onclick="pronto()">Estou Pronto</button>
+        <button onclick="pronto()">Estou Pronto(a)</button>
     </div>
 
-    <div id="quiz-container" class="container" style="display: none;">
+    <div id="div-perguntas" class="container" style="display: none;">
         <h1>Quiz</h1>
         <p id="bem-vindo"></p>
         <p id="questao"></p>
@@ -29,14 +29,14 @@
         <p id="nivel">Nível: 1</p>
     </div>
 
-    <div id="end-container" class="container" style="display: none;">
+    <div id="div-final" class="container" style="display: none;">
         <h2>Quiz concluído!</h2>
         <ul id="ranking"></ul>
         <button onclick="reiniciar()">Reiniciar</button>
     </div>
 
     <script>
-        const ws = new WebSocket('ws://localhost:8080');
+        const ws = new WebSocket('ws://localhost:7777');
         let questaoAtual = null;
         let nivel = 0;
 
@@ -49,10 +49,10 @@
 
             if (data.type === 'error') {
                 document.getElementById('error-message').textContent = data.message;
-            } else if (data.type === 'novo_jogador' || data.type === 'jogador_saiu') {
-                if (document.getElementById('quiz-container').style.display === 'none' && document.getElementById('end-container').style.display === 'none') {
-                    document.getElementById('jogadores-container').style.display = 'block';
-                    document.getElementById('login-container').style.display = 'none';
+            } else if (data.type === 'novo_jogador' || data.type === 'saida-jogador') {
+                if (document.getElementById('div-perguntas').style.display === 'none' && document.getElementById('div-final').style.display === 'none') {
+                    document.getElementById('div-jogador').style.display = 'block';
+                    document.getElementById('div-telainicial').style.display = 'none';
                     const jogadoresUl = document.getElementById('jogadores');
                     jogadoresUl.innerHTML = '';
                     data.jogadores.forEach(nome => {
@@ -62,18 +62,18 @@
                     });
                 }
             } else if (data.type === 'inicio_quiz' || data.type === 'questao') {
-                document.getElementById('jogadores-container').style.display = 'none';
-                document.getElementById('quiz-container').style.display = 'block';
+                document.getElementById('div-jogador').style.display = 'none';
+                document.getElementById('div-perguntas').style.display = 'block';
                 questaoAtual = data.questao;
                 displayQuestion(data.questao);
                 document.getElementById('nivel').textContent = 'Nível: ' + (nivel + 1);
                 document.getElementById('pontuacao').textContent = 'Pontuação: ' + (data.pontuacao !== undefined ? data.pontuacao : 0);
-                document.getElementById('end-container').style.display = 'none';
+                document.getElementById('div-final').style.display = 'none';
                 nivel++;
             } else if (data.type === 'end') {
-                document.getElementById('jogadores-container').style.display = 'none';
-                document.getElementById('quiz-container').style.display = 'none';
-                document.getElementById('end-container').style.display = 'block';
+                document.getElementById('div-jogador').style.display = 'none';
+                document.getElementById('div-perguntas').style.display = 'none';
+                document.getElementById('div-final').style.display = 'block';
                 const rankingUl = document.getElementById('ranking');
                 rankingUl.innerHTML = '';
                 data.ranking.forEach((jogador, index) => {
@@ -82,10 +82,10 @@
                     rankingUl.appendChild(li);
                 });
             } else if (data.type === 'reiniciar') {
-                document.getElementById('login-container').style.display = 'block';
-                document.getElementById('jogadores-container').style.display = 'none';
-                document.getElementById('quiz-container').style.display = 'none';
-                document.getElementById('end-container').style.display = 'none';
+                document.getElementById('div-telainicial').style.display = 'block';
+                document.getElementById('div-jogador').style.display = 'none';
+                document.getElementById('div-perguntas').style.display = 'none';
+                document.getElementById('div-final').style.display = 'none';
                 nivel = 0;
                 questaoAtual = null;
             }
@@ -121,7 +121,7 @@
         }
 
         function reiniciar() {
-    document.getElementById('jogadores-container').style.display = 'none';
+    document.getElementById('div-jogador').style.display = 'none';
     window.location.reload();
 }
     </script>

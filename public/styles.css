@@ -14,7 +14,7 @@ body {
     padding: 40px;
     background-color: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0,'' 0, 0.1);
     text-align: center;
     margin: 20px;
 }
@@ -55,20 +55,20 @@ button:hover {
     margin-bottom: 10px;
 }
 
-#jogadores-container ul {
+#div-jogador ul {
     list-style-type: none;
     padding: 0;
 }
 
-#jogadores-container ul li {
+#div-jogador ul li {
     margin: 10px 0;
 }
 
-#quiz-container, #end-container {
+#div-perguntas, #div-final {
     display: none;
 }
 
-#quiz-container.active, #end-container.active {
+#div-perguntas.active, #div-final.active {
     display: block;
 }
 
@@ -112,22 +112,22 @@ button:hover {
     color: #555;
 }
 
-#end-container h2 {
+#div-final h2 {
     margin-bottom: 20px;
     color: #333;
     font-size: 28px;
 }
 
-#end-container ul {
+#div-final ul {
     list-style-type: none;
     padding: 0;
 }
 
-#end-container ul li {
+#div-final ul li {
     margin: 10px 0;
 }
 
-#end-container button {
+#div-final button {
     background-color: #5291d4;
     color: white;
     padding: 12px 20px;
@@ -138,6 +138,6 @@ button:hover {
     transition: background-color 0.3s ease;
 }
 
-#end-container button:hover {
+#div-final button:hover {
     background-color: #0056b3;
 }

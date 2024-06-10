@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 7777;
 
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -105,7 +105,7 @@ wss.on('connection', (ws) => {
         console.log('Cliente desconectado!');
         jogadores = jogadores.filter(j => j.ws !== ws);
         broadcast({
-            type: 'jogador_saiu',
+            type: 'saida-jogador',
             nome: jogador.nome,
             jogadores: jogadores.map(j => j.nome)
         });
